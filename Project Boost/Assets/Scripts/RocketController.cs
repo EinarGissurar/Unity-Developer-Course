@@ -4,11 +4,15 @@ using UnityEngine.SceneManagement;
 
 public class RocketController : MonoBehaviour {
 
-    [SerializeField] float rotationSpeed = 5;
-    [SerializeField] float thrust = 5;
+    [SerializeField] float rotationSpeed = 5f, thrust = 5f, loadDelay = 2f;
+    [SerializeField] AudioClip mainEngine, death, victory;
+    [SerializeField] ParticleSystem pEngine, pDeath, pVictory;
+    [SerializeField] bool debugMode = false;
 
     private Rigidbody rigidBody;
     private AudioSource rocketSound;
+    private bool collisionToggle = true;
+    private int levelIndex, nextLevelIndex;
 
     enum State { Alive, Dying, Transcending}
     State state = State.Alive;
@@ -21,9 +25,26 @@ public class RocketController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (state != State.Dying) {
+        if (state == State.Alive) {
             Thrust();
             Rotate();
+            if (debugMode) {
+                DebugMode();
+            }
+        }
+    }
+
+    private void DebugMode() {
+        if (Input.GetKeyDown(KeyCode.L)) {
+            TransitionPlayer();
+        }
+        if (Input.GetKeyDown(KeyCode.C)) {
+            if (collisionToggle) {
+                collisionToggle = false;
+            }
+            else {
+                collisionToggle = true;
+            }
         }
     }
 
@@ -35,26 +56,51 @@ public class RocketController : MonoBehaviour {
             case "Friendly":
                 break;
             case "Goal":
-                state = State.Transcending;
-                Invoke("LoadNextScene", 1f);
+                TransitionPlayer();
                 break;
             case "Obstacle":
+                if (collisionToggle) {
                 KillPlayer();
+                }
                 break;
             default:
+                if (collisionToggle) {
                 KillPlayer();
+                }
                 break;
         }
     }
 
+    private void TransitionPlayer() {
+        state = State.Transcending;
+        if (rocketSound.isPlaying) {
+            rocketSound.Stop();
+        }
+        rocketSound.PlayOneShot(victory);
+        pVictory.Play();
+        Invoke("LoadNextScene", loadDelay);
+    }
+
     private void KillPlayer() {
         state = State.Dying;
-        rocketSound.Stop();
-        Invoke("Restart", 1f);
+        if (rocketSound.isPlaying) {
+            rocketSound.Stop();
+        }
+        rocketSound.PlayOneShot(death);
+        pDeath.Play();
+
+        Invoke("Restart", loadDelay);
     }
 
     private void LoadNextScene() {
-        SceneManager.LoadScene(1);
+        levelIndex = SceneManager.GetActiveScene().buildIndex;
+        if (levelIndex == SceneManager.sceneCountInBuildSettings - 1) {
+            nextLevelIndex = 0;
+        }
+        else {
+            nextLevelIndex = levelIndex + 1;
+        }
+        SceneManager.LoadScene(nextLevelIndex);
     }
 
     private void Restart() {
@@ -76,11 +122,15 @@ public class RocketController : MonoBehaviour {
         if (Input.GetKey(KeyCode.Space)) {
             rigidBody.AddRelativeForce(Vector3.up * Time.deltaTime * thrust);
             if (!rocketSound.isPlaying) {
-                rocketSound.Play();
+                rocketSound.PlayOneShot(mainEngine);
             }
+            pEngine.Play();
         }
         else if (rocketSound.isPlaying) {
             rocketSound.Stop();
+        }
+        else if (pEngine.isPlaying) {
+            pEngine.Stop();
         }
     }
 }
