@@ -1,19 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Ball: MonoBehaviour {
 
     [SerializeField] Paddle paddle;
     [SerializeField] float vX = 2f; 
-    [SerializeField] float vY = 15f;
+    [SerializeField] float vY = 10f;
 
-    Vector2 paddleToBallV;
+    [SerializeField] AudioClip[] ballSound;
 
-    bool start = false;
+    private Vector2 paddleToBallV;
+
+    private bool start = false;
+    private AudioClip click;
+    private AudioSource ballAudio;
 
     // Use this for initialization
     void Start () {
+        ballAudio = GetComponent<AudioSource>();
         paddleToBallV = transform.position - paddle.transform.position;
 	}
 	
@@ -33,6 +36,13 @@ public class Ball: MonoBehaviour {
         {
             start = true;
             GetComponent<Rigidbody2D>().velocity = new Vector2(vX, vY);
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision) {
+        if (start) {
+            click = ballSound[Random.Range(0, ballSound.Length)];
+            ballAudio.PlayOneShot(click);
         }
     }
 }
