@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 114899334650065978}
   m_Layer: 0
   m_Name: 1Hit
-  m_TagString: Untagged
+  m_TagString: BreakableBlock
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -80,6 +80,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   destroyed: {fileID: 8300000, guid: 9e1ba20a1d14c194397e40886f9cbc27, type: 3}
   particles: {fileID: 100000, guid: 7d846c02296ef4dc4abff04ce3e5262c, type: 2}
+  hitSprites: []
 --- !u!212 &212341449688194876
 SpriteRenderer:
   m_ObjectHideFlags: 1

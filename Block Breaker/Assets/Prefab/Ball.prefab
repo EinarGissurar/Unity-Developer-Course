@@ -186,8 +186,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   paddle: {fileID: 0}
-  vX: 2
-  vY: 10
+  speed: 500
+  vX: 0.1
+  vY: 0.5
+  randomFactor: 0.25
   ballSound:
   - {fileID: 8300000, guid: 79540678a49b86b47b45bdcea909ffb9, type: 3}
   - {fileID: 8300000, guid: 071fcdc5c365ead4f93f4805bb7a84bc, type: 3}

@@ -8,8 +8,6 @@ public class GameStatus : MonoBehaviour {
     [Range(0.1f, 5.0f)]
     [SerializeField] float gameSpeed = 1.0f;
     [SerializeField] int BlockValue;
-    [Range(1f, 5.0f)]
-    [SerializeField] float Blockmultiplier;
     [SerializeField] TextMeshProUGUI scoreDisplay;
 
     int currentScore = 0;
@@ -37,8 +35,8 @@ public class GameStatus : MonoBehaviour {
         Time.timeScale = gameSpeed;
 	}
 
-    public void AddScore() {
-        currentScore += Mathf.CeilToInt(BlockValue * Blockmultiplier);
+    public void AddScore(int multiplier) {
+        currentScore += Mathf.CeilToInt(BlockValue * multiplier);
         scoreDisplay.text = currentScore.ToString();
     }
 }

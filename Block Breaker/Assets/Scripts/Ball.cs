@@ -3,44 +3,55 @@
 public class Ball: MonoBehaviour {
 
     [SerializeField] Paddle paddle;
-    [SerializeField] float vX = 2f; 
-    [SerializeField] float vY = 10f;
-
+    [SerializeField] float speed = 100f;
+    [SerializeField] float vX = 0.1f; 
+    [SerializeField] float vY = 0.5f;
+    [Range(0.05f, 5f)]
+    [SerializeField] float randomFactor;
     [SerializeField] AudioClip[] ballSound;
 
-    private Vector2 paddleToBallV;
-
     private bool start = false;
+    private float deltaSpeed;
     private AudioClip click;
     private AudioSource ballAudio;
+    private Rigidbody2D ballBody;
+    private Vector2 paddlePos, paddleToBallVector, randomBallVector;
 
     // Use this for initialization
     void Start () {
         ballAudio = GetComponent<AudioSource>();
-        paddleToBallV = transform.position - paddle.transform.position;
+        ballBody = GetComponent<Rigidbody2D>();
+        paddleToBallVector = transform.position - paddle.transform.position;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+        deltaSpeed = speed * Time.deltaTime;
         if (!start)
         {
             handleStart();
+        }
+        else {
+            ballBody.velocity = deltaSpeed * (ballBody.velocity.normalized);
         }
     }
 
     private void handleStart()
     {
-        Vector2 paddlePos = new Vector2(paddle.transform.position.x, paddle.transform.position.y);
-        transform.position = paddlePos + paddleToBallV;
+        paddlePos = new Vector2(paddle.transform.position.x, paddle.transform.position.y);
+        transform.position = paddlePos + paddleToBallVector;
         if (Input.GetMouseButtonDown(0))
         {
             start = true;
-            GetComponent<Rigidbody2D>().velocity = new Vector2(vX, vY);
+            ballBody.velocity = new Vector2(vX, vY);
         }
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
         if (start) {
+            randomBallVector = new Vector2(Random.Range(-randomFactor, randomFactor), Random.Range(-randomFactor, randomFactor));
+            ballBody.velocity += randomBallVector;
+
             click = ballSound[Random.Range(0, ballSound.Length)];
             ballAudio.PlayOneShot(click);
         }
