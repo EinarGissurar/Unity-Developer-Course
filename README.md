@@ -2,7 +2,7 @@
   
 The following are a collection of projects made under the courses "Complete C# Unity Developer 2D" and "Complete C# Unity Developer 3D"
   
-2D projects:
+2D projects:  
 Number Wizard  
 Block Breaker  
 Laser Defender  
